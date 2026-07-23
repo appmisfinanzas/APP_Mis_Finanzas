@@ -174,8 +174,5 @@ function exportToCSV() {
     a.setAttribute('download', `Finanzas_${currentUser}.csv`);
     a.click();
 }
-  const hoja = XLSX.utils.json_to_sheet(datosExcel);
-  const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, "Transacciones");
-  XLSX.writeFile(libro, `Finanzas_${usuarioActual}_${filtroFechaInput.value || 'General'}.xlsx`);
-});
+
+
