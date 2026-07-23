@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Flow PRO</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SheetJS para Exportar a Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 md:p-8 flex flex-col justify-center">
+
+  <!-- MODAL / PANTALLA DE SELECCIÓN DE USUARIO -->
+  <div id="pantalla-login" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center space-y-6">
+      <div class="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-fuchsia-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-indigo-500/30">
+        <i data-lucide="wallet" class="w-8 h-8 text-white"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-black text-white">Bienvenido a FinanceFlow</h2>
+        <p class="text-slate-400 text-sm mt-1">Ingresa tu nombre para acceder a tu panel personalizado</p>
+      </div>
+      <form id="form-login" class="space-y-4">
+        <div>
+          <input type="text" id="nombre-usuario-input" placeholder="Escribe tu nombre..." required
+            class="w-full bg-slate-800 border border-slate-700 text-center text-lg text-slate-100 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+        </div>
+        <button type="submit"
+          class="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex justify-center items-center gap-2">
+          Ingresar a mis cuentas <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL DEL DASHBOARD -->
+  <div id="dashboard" class="max-w-6xl mx-auto space-y-8 w-full hidden">
+    
+    <!-- ENCABEZADO PRO CON USUARIO -->
+    <header class="flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/80 backdrop-blur border border-slate-800 p-6 rounded-2xl shadow-2xl">
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500 bg-clip-text text-transparent">
+            ⚡ FinanceFlow
+          </h1>
+          <span class="text-xs px-2 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full font-mono">PRO</span>
+        </div>
+        <p id="saludo-usuario" class="text-slate-300 text-sm mt-1 font-medium">¡Hola!</p>
+      </div>
+      
+      <!-- Controles de Usuario, Filtro y Exportar -->
+      <div class="flex flex-wrap items-center gap-3">
+        <input type="month" id="filtro-fecha" class="bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2 focus:ring-2 focus:ring-cyan-400 outline-none">
+        
+        <button id="btn-exportar" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-all shadow-lg shadow-emerald-900/30">
+          <i data-lucide="download" class="w-4 h-4"></i> Exportar
+        </button>
+
+        <button id="btn-cambiar-usuario" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-sm px-3 py-2 rounded-xl transition-all">
+          <i data-lucide="user" class="w-4 h-4 text-indigo-400"></i> <span id="nombre-usuario-badge">Usuario</span> 
+          <i data-lucide="log-out" class="w-3.5 h-3.5 text-slate-500 ml-1"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- METRICAS / METROS KPI -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all">
+        <div class="absolute -right-2 -bottom-2 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-all"></div>
+        <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Ingresos Totales</span>
+        <p id="total-ingresos" class="text-2xl font-black text-emerald-400 mt-2">$0</p>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden group hover:border-rose-500/50 transition-all">
+        <div class="absolute -right-2 -bottom-2 w-20 h-20 bg-rose-500/10 rounded-full blur-xl group-hover:bg-rose-500/20 transition-all"></div>
+        <span class="text-xs font-semibold uppercase tracking-wider text-rose-400">Gastos Totales</span>
+        <p id="total-gastos" class="text-2xl font-black text-rose-400 mt-2">$0</p>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden group hover:border-cyan-500/50 transition-all">
+        <div class="absolute -right-2 -bottom-2 w-20 h-20 bg-cyan-500/10 rounded-full blur-xl group-hover:bg-cyan-500/20 transition-all"></div>
+        <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400">Balance Neto</span>
+        <p id="balance-total" class="text-2xl font-black text-cyan-300 mt-2">$0</p>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden group hover:border-fuchsia-500/50 transition-all">
+        <div class="absolute -right-2 -bottom-2 w-20 h-20 bg-fuchsia-500/10 rounded-full blur-xl group-hover:bg-fuchsia-500/20 transition-all"></div>
+        <span class="text-xs font-semibold uppercase tracking-wider text-fuchsia-400">Tasa de Ahorro</span>
+        <p id="tasa-ahorro" class="text-2xl font-black text-fuchsia-300 mt-2">0%</p>
+      </div>
+    </div>
+
+    <!-- SECCION PRINCIPAL: FORMULARIO + GRAFICOS -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- FORMULARIO DE REGISTRO (4 Cols) -->
+      <div class="lg:col-span-4 bg-slate-900/80 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+            <i data-lucide="plus-circle" class="text-indigo-400 w-5 h-5"></i> Nuevo Movimiento
+          </h2>
+          
+          <form id="form-transaccion" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Concepto</label>
+              <input type="text" id="descripcion" placeholder="Ej: Sueldo, Supermercado" required
+                class="w-full bg-slate-800 border border-slate-700 text-slate-100 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Monto ($)</label>
+                <input type="number" id="monto" placeholder="0" step="0.01" required
+                  class="w-full bg-slate-800 border border-slate-700 text-slate-100 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Tipo</label>
+                <select id="tipo" class="w-full bg-slate-800 border border-slate-700 text-slate-100 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                  <option value="ingreso">🟢 Ingreso</option>
+                  <option value="gasto">🔴 Gasto</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Categoría</label>
+                <select id="categoria" class="w-full bg-slate-800 border border-slate-700 text-slate-100 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Fecha</label>
+                <input type="date" id="fecha" required
+                  class="w-full bg-slate-800 border border-slate-700 text-slate-100 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              </div>
+            </div>
+
+            <button type="submit"
+              class="w-full mt-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex justify-center items-center gap-2">
+              <i data-lucide="check" class="w-5 h-5"></i> Registrar Transacción
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- GRAFICOS INTERACTIVOS (8 Cols) -->
+      <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-300 self-start mb-2 flex items-center gap-2">
+            <i data-lucide="pie-chart" class="text-fuchsia-400 w-4 h-4"></i> Gastos por Categoría
+          </h3>
+          <div class="w-full max-w-[240px] my-auto">
+            <canvas id="graficoCategorias"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-300 self-start mb-2 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="text-cyan-400 w-4 h-4"></i> Balance Mensual
+          </h3>
+          <div class="w-full h-[220px] my-auto">
+            <canvas id="graficoBarras"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TABLA DE TRANSACCIONES -->
+    <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl shadow-xl">
+      <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+        <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+          <i data-lucide="history" class="text-cyan-400 w-5 h-5"></i> Historial de Movimientos
+        </h2>
+        
+        <div class="relative w-full md:w-64">
+          <input type="text" id="buscador" placeholder="Buscar concepto o categoría..."
+            class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl pl-9 pr-3 py-2 focus:ring-2 focus:ring-cyan-400 outline-none">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 text-xs uppercase tracking-wider">
+              <th class="pb-3 px-3">Fecha</th>
+              <th class="pb-3 px-3">Concepto</th>
+              <th class="pb-3 px-3">Categoría</th>
+              <th class="pb-3 px-3 text-right">Monto</th>
+              <th class="pb-3 px-3 text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="lista-transacciones" class="divide-y divide-slate-800/50 text-sm">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
