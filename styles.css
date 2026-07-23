@@ -28,7 +28,6 @@ body {
     min-height: 100vh;
 }
 
-/* Efecto Glassmorphism con Hover sobresaliente */
 .glass-card, .metric-card {
     background: var(--card-bg);
     backdrop-filter: blur(16px);
@@ -40,14 +39,14 @@ body {
 }
 
 .glass-card:hover, .metric-card:hover {
-    transform: translateY(-5px) scale(1.01);
+    transform: translateY(-4px);
     border-color: var(--neon-cyan);
-    box-shadow: 0 12px 30px rgba(0, 242, 254, 0.25);
+    box-shadow: 0 10px 25px rgba(0, 242, 254, 0.2);
 }
 
 .hidden { display: none !important; }
 
-/* Pantalla de Login */
+/* Login */
 .login-box {
     max-width: 420px;
     margin: 12vh auto;
@@ -133,10 +132,9 @@ button {
 
 .btn-logout:hover { background: rgba(255, 94, 0, 0.2); color: var(--neon-orange); border-color: var(--neon-orange); }
 
-/* Dashboard */
+/* Grid de Tarjetas Superiores */
 .container { padding: 25px 5%; max-width: 1350px; margin: 0 auto; }
 
-/* Grid de 2x2 para las tarjetas superiores */
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -165,21 +163,12 @@ button {
 .metric-card.expense .amount { color: var(--neon-orange); text-shadow: 0 0 10px rgba(255, 94, 0, 0.2); }
 .metric-card .sub-text { font-size: 0.8rem; color: var(--text-muted); }
 
-/* Tarjeta del gráfico reducida */
-.chart-card {
-    border-left: 4px solid var(--neon-purple);
-}
-
-.canvas-wrapper {
-    position: relative;
-    height: 135px;
-    width: 100%;
-}
+/* Gráfica Ajustada */
+.chart-card { border-left: 4px solid var(--neon-purple); }
+.canvas-wrapper { position: relative; height: 125px; width: 100%; }
 
 /* Formulario */
-.main-grid {
-    margin-bottom: 25px;
-}
+.main-grid { margin-bottom: 25px; }
 
 .form-row {
     display: grid;
@@ -213,9 +202,6 @@ th { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transfo
 
 .btn-delete { background: none; color: #FF4757; font-size: 1.1rem; }
 .btn-delete:hover { transform: scale(1.2); }
-
-
- 
 
 
   
