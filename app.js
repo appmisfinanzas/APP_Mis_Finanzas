@@ -3,19 +3,20 @@ let transactions = [];
 let chartInstance = null;
 
 const CATEGORIAS = {
-   Ingreso: ['💰 Sueldo / Nómina', '🚀 Freelance / Proyectos', '📈 Inversiones', '🛍️ Ventas', '🎁 Otros Ingresos'],
-   Gasto: ['🏠 Servicios / Hogar', '🍔 Alimentación', '🚗 Transporte', '💊 Salud / Medicina', '🎉 Entretenimiento', '📚 Educación', '🛍️ Compras', '💸 Otros Gastos']
+    ingreso: ['💰 Sueldo / Nómina', '🚀 Freelance / Proyectos', '📈 Inversiones', '🛍️ Ventas', '🎁 Otros Ingresos'],
+    gasto: ['🏠 Servicios / Hogar', '🍔 Alimentación', '🚗 Transporte', '💊 Salud / Medicina', '🎉 Entretenimiento', '📚 Educación', '🛍️ Compras', '💸 Otros Gastos']
 };
 
-window.onload = () => {
+window.addEventListener('DOMContentLoaded', () => {
     const savedUser = localStorage.getItem('finance_user');
     if (savedUser) {
         setUser(savedUser);
     }
-};
+});
 
 function loginUser() {
     const input = document.getElementById('username-input');
+    if (!input) return;
     const username = input.value.trim();
     if (username) {
         localStorage.setItem('finance_user', username);
@@ -25,7 +26,9 @@ function loginUser() {
 
 function setUser(username) {
     currentUser = username;
-    document.getElementById('user-display').innerHTML = `<i class="fa-solid fa-user"></i> ${currentUser}`;
+    const userDisplay = document.getElementById('user-display');
+    if (userDisplay) userDisplay.innerHTML = `<i class="fa-solid fa-user"></i> ${currentUser}`;
+    
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('app-screen').classList.remove('hidden');
     
@@ -39,8 +42,11 @@ function logout() {
 }
 
 function updateCategories() {
-    const type = document.getElementById('type').value;
+    const typeElem = document.getElementById('type');
     const catSelect = document.getElementById('category');
+    if (!typeElem || !catSelect) return;
+    
+    const type = typeElem.value;
     catSelect.innerHTML = CATEGORIAS[type].map(c => `<option value="${c}">${c}</option>`).join('');
 }
 
@@ -61,6 +67,8 @@ function addTransaction(e) {
     const amount = parseFloat(document.getElementById('amount').value);
     const category = document.getElementById('category').value;
     const description = document.getElementById('description').value;
+
+    if (!amount || isNaN(amount)) return;
 
     const newTrans = {
         id: Date.now(),
@@ -84,6 +92,8 @@ function deleteTransaction(id) {
 
 function render() {
     const list = document.getElementById('transactions-list');
+    if (!list) return;
+    
     list.innerHTML = '';
 
     let totalInc = 0;
@@ -95,9 +105,8 @@ function render() {
             totalInc += t.amount;
         } else {
             totalExp += t.amount;
+            categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
         }
-
-        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -120,7 +129,9 @@ function render() {
 }
 
 function renderChart(categoryData) {
-    const ctx = document.getElementById('expenseChart').getContext('2d');
+    const canvas = document.getElementById('expenseChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
     
     if (chartInstance) {
         chartInstance.destroy();
@@ -134,7 +145,7 @@ function renderChart(categoryData) {
     chartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: labels.length ? labels : ['Sin datos'],
+            labels: labels.length ? labels : ['Sin gastos'],
             datasets: [{
                 data: data.length ? data : [1],
                 backgroundColor: data.length ? colors.slice(0, data.length) : ['#1E293B'],
@@ -151,7 +162,7 @@ function renderChart(categoryData) {
                     labels: { 
                         color: '#94A3B8', 
                         font: { family: 'Plus Jakarta Sans', size: 10 },
-                        boxWidth: 12
+                        boxWidth: 10
                     } 
                 }
             }
@@ -175,4 +186,15 @@ function exportToCSV() {
     a.click();
 }
 
+
+
+
+   
+
+
+  
+
+  
+
+    
 
