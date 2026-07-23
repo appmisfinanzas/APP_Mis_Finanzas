@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinanceFlow - Control de Finanzas</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=3">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -13,10 +13,10 @@
     <!-- Pantalla de Login -->
     <div id="login-screen" class="glass-card login-box">
         <div class="logo-icon"><i class="fa-solid fa-wallet"></i></div>
-        <h2>Bienvenido a <span>Mis Finanzas</span></h2>
+        <h2>Bienvenido a <span>FinanceFlow</span></h2>
         <p>Selecciona o ingresa un perfil para continuar</p>
         <div class="input-group">
-            <input type="text" id="username-input" placeholder="Nombre">
+            <input type="text" id="username-input" placeholder="Nombre (ej. Luis, Esposa...)">
             <button onclick="loginUser()"><i class="fa-solid fa-arrow-right"></i> Acceder</button>
         </div>
     </div>
@@ -36,7 +36,7 @@
         </header>
 
         <main class="container">
-            <!-- Cuadrícula Superior de 4 Tarjetas (Incluyendo la Gráfica) -->
+            <!-- Cuadrícula Superior de 4 Tarjetas -->
             <section class="metrics-grid">
                 <div class="card metric-card total">
                     <h3>Balance Total</h3>
@@ -53,7 +53,7 @@
                     <div class="amount" id="total-expense">-$0</div>
                     <span class="sub-text">Total Salidas</span>
                 </div>
-                <!-- Gráfico compacto arriba -->
+                <!-- Gráfico compacto al lado de Gastos -->
                 <div class="card metric-card chart-card">
                     <h3><i class="fa-solid fa-chart-pie"></i> Distribución de Gastos</h3>
                     <div class="canvas-wrapper">
@@ -62,7 +62,7 @@
                 </div>
             </section>
 
-            <!-- Sección Inferior: Solo el Formulario de Nuevo Movimiento -->
+            <!-- Formulario de Nuevo Movimiento -->
             <section class="main-grid">
                 <div class="card glass-card">
                     <h2><i class="fa-solid fa-plus-circle"></i> Nuevo Movimiento</h2>
@@ -122,6 +122,6 @@
         </main>
     </div>
 
-    <script src="app.js?v=4"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
